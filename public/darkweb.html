@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Dark Web Monitor</title>
+    <meta name="description" content="Check if your email has been exposed in data breaches on the dark web." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="darkweb.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon"><svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg></div>
+                <div class="logo-text">
+                    <h1><a href="/" style="color:inherit;text-decoration:none">CHECK<span
+                                style="color:var(--violet)">.</span>IT</a></h1>
+                    <span class="logo-subtitle">DARK WEB MONITOR</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>INTEL</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>SECURITY</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item active"><span class="nav-item-icon">🕵️</span>
+                            DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="dw-main">
+        <!-- Search -->
+        <section class="panel panel-tech dw-search-panel">
+            <div class="dw-hero">
+                <div class="dw-hero-icon">🕵️</div>
+                <h2>Dark Web Breach Monitor</h2>
+                <p>Check if your email has been exposed in known data breaches</p>
+            </div>
+            <form id="dw-form" class="input-group dw-input-group">
+                <input type="email" id="dw-email" placeholder="Enter your email address..." autocomplete="off" />
+                <button type="submit" id="dw-btn">
+                    <span class="btn-text">🔍 SCAN DARK WEB</span>
+                    <span class="btn-loader" hidden>
+                        <div class="spinner small"></div>
+                    </span>
+                </button>
+            </form>
+            <!-- Loading Animation -->
+            <div class="dw-scanning" id="dw-scanning" hidden>
+                <div class="scan-wave"></div>
+                <div class="scan-text" id="scan-text">Scanning dark web databases...</div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="dw-results" id="dw-results" hidden>
+            <!-- Risk Score -->
+            <div class="panel panel-tech dw-risk-panel" id="dw-risk-panel">
+                <div class="dw-risk-header">
+                    <div class="dw-risk-score">
+                        <span class="dw-risk-number" id="dw-risk-number">0</span>
+                        <span class="dw-risk-label">/ 100 RISK</span>
+                    </div>
+                    <div class="dw-risk-info">
+                        <div class="dw-risk-level" id="dw-risk-level">—</div>
+                        <div class="dw-risk-breaches" id="dw-risk-breaches">Found in 0 breaches</div>
+                    </div>
+                </div>
+                <div class="dw-exposed-types" id="dw-exposed-types"></div>
+            </div>
+
+            <!-- Breach Timeline -->
+            <div class="panel panel-tech">
+                <div class="panel-header"><span class="panel-icon">📅</span>
+                    <h2>Breach Timeline</h2>
+                </div>
+                <div class="dw-timeline" id="dw-timeline"></div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="panel panel-tech">
+                <div class="panel-header"><span class="panel-icon">🛡️</span>
+                    <h2>Security Recommendations</h2>
+                </div>
+                <div class="dw-recs" id="dw-recs"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer><span>CHECK-IT | Scan. Detect. Protect BY Parikshit Singh Baghel</span></footer>
+    <script src="darkweb.js"></script>
+</body>
+
+</html>

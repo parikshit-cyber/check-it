@@ -1,0 +1,353 @@
+/* Network Scanner Styles */
+.net-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 24px 40px;
+}
+
+.net-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.net-tab {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px 8px 0 0;
+    color: var(--text-dim);
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.net-tab:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+}
+
+.net-tab.active {
+    background: rgba(0, 255, 255, 0.08);
+    border-color: rgba(0, 255, 255, 0.2);
+    color: var(--cyan);
+    border-bottom-color: transparent;
+}
+
+.tab-desc {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+}
+
+/* DNS Results */
+.dns-resolvers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.dns-resolver-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    animation: fadeSlideUp 0.3s ease;
+}
+
+.dns-resolver-name {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    color: var(--text);
+    min-width: 160px;
+}
+
+.dns-resolver-ips {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--cyan);
+    flex: 1;
+}
+
+.dns-status {
+    font-size: 1.2rem;
+}
+
+.dns-verdict {
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.dns-verdict.safe {
+    background: rgba(0, 255, 136, 0.08);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    color: var(--green);
+}
+
+.dns-verdict.leak {
+    background: rgba(255, 51, 102, 0.08);
+    border: 1px solid rgba(255, 51, 102, 0.2);
+    color: #ff3366;
+}
+
+/* Port Results */
+.port-summary {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+
+.port-stat {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.port-stat-value {
+    font-family: var(--font-head);
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+.port-stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.port-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.port-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    animation: fadeSlideUp 0.3s ease;
+}
+
+.port-card.open {
+    background: rgba(255, 51, 102, 0.06);
+    border: 1px solid rgba(255, 51, 102, 0.15);
+}
+
+.port-card.filtered {
+    background: rgba(255, 204, 0, 0.06);
+    border: 1px solid rgba(255, 204, 0, 0.15);
+}
+
+.port-card.closed {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-dim);
+}
+
+.port-number {
+    font-weight: 700;
+    min-width: 45px;
+}
+
+.port-service {
+    min-width: 70px;
+    color: var(--text);
+}
+
+.port-status-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.port-card.open .port-status-tag {
+    background: rgba(255, 51, 102, 0.2);
+    color: #ff3366;
+}
+
+.port-card.filtered .port-status-tag {
+    background: rgba(255, 204, 0, 0.2);
+    color: #ffcc00;
+}
+
+.port-card.closed .port-status-tag {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-dim);
+}
+
+/* SSL Results */
+.ssl-grade-display {
+    text-align: center;
+    margin: 16px 0;
+}
+
+.ssl-grade-letter {
+    font-family: var(--font-head);
+    font-size: 4rem;
+    font-weight: 900;
+}
+
+.ssl-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.ssl-detail {
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+}
+
+.ssl-detail-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.ssl-detail-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-top: 4px;
+    word-break: break-all;
+}
+
+.ssl-findings {
+    margin-top: 16px;
+}
+
+.ssl-finding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.ssl-finding.critical,
+.ssl-finding.warning {
+    background: rgba(255, 51, 102, 0.06);
+    border: 1px solid rgba(255, 51, 102, 0.15);
+    color: #ff3366;
+}
+
+/* Latency */
+.latency-map-container {
+    height: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #0a0a1a;
+    margin: 16px 0;
+}
+
+.latency-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.latency-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    animation: fadeSlideUp 0.3s ease;
+}
+
+.latency-name {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    color: var(--text);
+    min-width: 140px;
+}
+
+.latency-region {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    min-width: 100px;
+}
+
+.latency-bar-container {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.latency-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.latency-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 70px;
+    text-align: right;
+}
+
+.scan-start-btn {
+    padding: 12px 32px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.scan-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 255, 255, 0.2);
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

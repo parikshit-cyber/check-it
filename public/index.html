@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT - Scan. Detect. Protect.</title>
+    <meta name="description"
+        content="Real-time cybersecurity dashboard with AI-powered phishing detection, IP intelligence, and global news." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <!-- ═══════════════ BACKGROUND EFFECTS ═══════════════ -->
+    <div class="bg-grid"></div>
+    <div class="bg-hex" id="bg-hex"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>CHECK<span style="color:var(--violet)">.</span>IT</h1>
+                    <span class="logo-subtitle">SECURE / ANALYZE / PROTECT</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="status-indicators">
+                <div class="status-item">
+                    <span class="status-label">SYS_STATUS</span>
+                    <span class="status-dot active"></span>
+                    <span class="status-label-value">OPERATIONAL</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">AI_CORE</span>
+                    <span class="status-dot pulse"></span>
+                    <span class="status-label-value">OPTIMIZED</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>INTEL</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>SECURITY</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="theme-toggle" id="theme-toggle">
+                <div class="theme-toggle-track">
+                    <div class="theme-toggle-thumb"></div>
+                </div>
+            </div>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <!-- ═══════════════ LIVE STATS BAR ═══════════════ -->
+    <section class="stats-bar" id="stats-bar">
+        <div class="stat-module">
+            <span class="stat-tag">U_IP</span>
+            <span class="stat-data" id="stat-ip">Detecting...</span>
+        </div>
+        <div class="stat-module">
+            <span class="stat-tag">ISP_PROV</span>
+            <span class="stat-data" id="stat-isp">Detecting...</span>
+        </div>
+        <div class="stat-module">
+            <span class="stat-tag">SESSION_TIME</span>
+            <span class="stat-data" id="stat-runtime">00:00:00</span>
+        </div>
+        <div class="stat-module">
+            <span class="stat-tag">SCANS_24H</span>
+            <span class="stat-data" id="stat-scans">0</span>
+        </div>
+    </section>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <main id="dashboard">
+
+        <!-- ─── Global News Map Panel ─── -->
+        <section class="panel panel-globe panel-tech" id="panel-news">
+            <div class="panel-header">
+                <span class="panel-icon">🌍</span>
+                <h2>Global Latest Updates</h2>
+                <span class="panel-badge live">NEWS</span>
+            </div>
+            <div class="news-map-container" id="news-map-container"></div>
+            <div class="news-feed" id="news-feed">
+                <div class="news-feed-loading">
+                    <div class="spinner small"></div>
+                    <span>Loading latest updates...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Right Column ─── -->
+        <div class="right-column">
+
+            <!-- ─── Phishing Detector ─── -->
+            <section class="panel panel-phishing panel-tech" id="panel-phishing">
+                <div class="panel-header">
+                    <span class="panel-icon">🎣</span>
+                    <h2>Phishing Detector</h2>
+                    <span class="panel-badge ai">AI</span>
+                </div>
+                <div class="panel-body">
+                    <form id="phishing-form" class="input-group">
+                        <input type="text" id="phishing-input" placeholder="Enter suspicious URL to analyze..."
+                            autocomplete="off" />
+                        <button type="submit" id="phishing-btn">
+                            <span class="btn-text">ANALYZE</span>
+                            <span class="btn-loader" hidden>
+                                <div class="spinner small"></div>
+                            </span>
+                        </button>
+                    </form>
+                    <div class="result-area" id="phishing-result" hidden></div>
+                </div>
+            </section>
+
+            <!-- ─── IP Intelligence ─── -->
+            <section class="panel panel-ip panel-tech" id="panel-ip">
+                <div class="panel-header">
+                    <span class="panel-icon">📡</span>
+                    <h2>IP Intelligence</h2>
+                    <span class="panel-badge intel">INTEL</span>
+                </div>
+                <div class="panel-body">
+                    <form id="ip-form" class="input-group">
+                        <input type="text" id="ip-input" placeholder="Enter IP address (e.g. 8.8.8.8)..."
+                            autocomplete="off" />
+                        <button type="submit" id="ip-btn">
+                            <span class="btn-text">LOOKUP</span>
+                            <span class="btn-loader" hidden>
+                                <div class="spinner small"></div>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+            <!-- ─── Email Phishing Detector ─── -->
+            <section class="panel panel-email panel-tech" id="panel-email">
+                <div class="panel-header">
+                    <span class="panel-icon">✉️</span>
+                    <h2>Email Phishing</h2>
+                    <span class="panel-badge ai">AI</span>
+                </div>
+                <div class="panel-body">
+                    <div class="eml-dropzone" id="eml-dropzone">
+                        <div class="dropzone-icon">📨</div>
+                        <div class="dropzone-text">Drop <strong>.eml</strong> file here</div>
+                        <div class="dropzone-sub">or click to browse</div>
+                        <input type="file" id="eml-file-input" accept=".eml" hidden />
+                    </div>
+                    <div class="eml-loading" id="eml-loading" hidden>
+                        <div class="spinner small"></div>
+                        <span>Analyzing email...</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════ IP INTELLIGENCE — FULL RESULTS SCREEN ═══════════════ -->
+    <section class="ip-fullscreen" id="ip-fullscreen" hidden>
+        <div class="ip-full-header">
+            <div class="ip-full-title">
+                <span class="panel-icon">📡</span>
+                <h2>IP Intelligence Report</h2>
+                <span class="ip-queried-ip" id="ip-queried-ip"></span>
+            </div>
+            <button class="ip-close-btn" id="ip-close-btn">✕ CLOSE</button>
+        </div>
+
+        <div class="ip-full-body">
+            <!-- Left: Map + Location -->
+            <div class="ip-full-left">
+                <div class="ip-map-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">🗺️</span>
+                        <h2>Geolocation</h2>
+                    </div>
+                    <div class="ip-map-container" id="ip-map-container"></div>
+                    <div class="ip-location-bar" id="ip-location-bar"></div>
+                </div>
+            </div>
+
+            <!-- Right: All Intelligence Cards -->
+            <div class="ip-full-right">
+
+                <!-- Risk Overview -->
+                <div class="ip-intel-card ip-risk-overview" id="ip-risk-overview"></div>
+
+                <!-- Intelligence Grid -->
+                <div class="ip-intel-grid">
+                    <!-- VPN / Proxy / Tor -->
+                    <div class="ip-intel-card" id="ip-vpn-card"></div>
+                    <!-- Network Type -->
+                    <div class="ip-intel-card" id="ip-network-card"></div>
+                    <!-- TTL & OS -->
+                    <div class="ip-intel-card" id="ip-ttl-card"></div>
+                    <!-- ASN Info -->
+                    <div class="ip-intel-card" id="ip-asn-card"></div>
+                    <!-- Risk Factors -->
+                    <div class="ip-intel-card ip-risk-factors-card" id="ip-risk-factors-card"></div>
+                    <!-- Network Details -->
+                    <div class="ip-intel-card" id="ip-details-card"></div>
+                </div>
+
+                <!-- Tags -->
+                <div class="ip-tags-full" id="ip-tags-full"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ EMAIL ANALYSIS — FULL RESULTS SCREEN ═══════════════ -->
+    <section class="email-fullscreen" id="email-fullscreen" hidden>
+        <div class="ip-full-header">
+            <div class="ip-full-title">
+                <span class="panel-icon">✉️</span>
+                <h2>Email Phishing Analysis</h2>
+                <span class="ip-queried-ip" id="email-subject-badge"></span>
+            </div>
+            <button class="ip-close-btn" id="email-close-btn">✕ CLOSE</button>
+        </div>
+        <div class="ip-full-body">
+            <!-- Left Column -->
+            <div class="ip-full-left">
+                <!-- Risk Overview -->
+                <div class="ip-intel-card ip-risk-overview" id="email-risk-overview"></div>
+                <!-- Auth Status (SPF / DKIM / DMARC) -->
+                <div class="email-auth-grid" id="email-auth-grid"></div>
+                <!-- Sender Intel + Map -->
+                <div class="ip-map-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📡</span>
+                        <h2>Sender Intelligence</h2>
+                    </div>
+                    <div class="ip-map-container" id="email-map-container"></div>
+                    <div class="ip-location-bar" id="email-sender-info"></div>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="ip-full-right">
+                <!-- Header Analysis -->
+                <div class="ip-intel-card" id="email-header-card"></div>
+                <!-- Subject Analysis -->
+                <div class="ip-intel-card" id="email-subject-card"></div>
+                <!-- Body Analysis -->
+                <div class="ip-intel-card" id="email-body-card"></div>
+                <!-- Links Analysis -->
+                <div class="ip-intel-card" id="email-links-card"></div>
+                <!-- Attachments -->
+                <div class="ip-intel-card" id="email-attachments-card"></div>
+                <!-- Recommendations -->
+                <div class="ip-intel-card" id="email-recommendations-card"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer>
+        <span>CHECK-IT | Scan. Detect. Protect BY Parikshit Singh Baghel</span>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

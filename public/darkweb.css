@@ -1,0 +1,338 @@
+/* Dark Web Monitor Styles */
+.dw-main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 100px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.dw-hero {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dw-hero-icon {
+    font-size: 3rem;
+}
+
+.dw-hero h2 {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    margin: 10px 0 6px;
+}
+
+.dw-hero p {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.dw-input-group {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+}
+
+.dw-input-group input {
+    flex: 1;
+}
+
+/* Scanning Animation */
+.dw-scanning {
+    text-align: center;
+    margin-top: 24px;
+    padding: 30px;
+}
+
+.scan-wave {
+    width: 80px;
+    height: 80px;
+    border: 3px solid rgba(0, 255, 255, 0.3);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: scan-pulse 1.5s ease infinite;
+    position: relative;
+}
+
+.scan-wave::before,
+.scan-wave::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border: 2px solid rgba(0, 255, 255, 0.15);
+    border-radius: 50%;
+    animation: scan-pulse 1.5s ease infinite;
+}
+
+.scan-wave::after {
+    inset: -24px;
+    animation-delay: 0.3s;
+}
+
+@keyframes scan-pulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+}
+
+.scan-text {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    animation: blink-text 1s step-end infinite;
+}
+
+@keyframes blink-text {
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* Risk Panel */
+.dw-risk-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 24px;
+}
+
+.dw-risk-score {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.dw-risk-number {
+    font-family: var(--font-head);
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.dw-risk-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+.dw-risk-level {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.dw-risk-breaches {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+/* Exposed Data Types */
+.dw-exposed-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 24px 20px;
+}
+
+.dw-data-tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dw-data-tag.critical {
+    background: rgba(255, 51, 102, 0.12);
+    color: #ff3366;
+    border: 1px solid rgba(255, 51, 102, 0.25);
+}
+
+.dw-data-tag.high {
+    background: rgba(255, 102, 51, 0.12);
+    color: #ff6633;
+    border: 1px solid rgba(255, 102, 51, 0.25);
+}
+
+.dw-data-tag.medium {
+    background: rgba(255, 204, 0, 0.12);
+    color: #ffcc00;
+    border: 1px solid rgba(255, 204, 0, 0.25);
+}
+
+.dw-data-tag.low {
+    background: rgba(0, 255, 255, 0.08);
+    color: var(--cyan);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+/* Breach Timeline */
+.dw-timeline {
+    padding: 16px;
+}
+
+.breach-card {
+    display: flex;
+    gap: 16px;
+    padding: 18px;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    border-left: 3px solid;
+    animation: fadeSlideUp 0.4s ease;
+}
+
+.breach-card.critical {
+    border-left-color: #ff3366;
+}
+
+.breach-card.high {
+    border-left-color: #ff6633;
+}
+
+.breach-card.medium {
+    border-left-color: #ffcc00;
+}
+
+.breach-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    min-width: 90px;
+}
+
+.breach-info {
+    flex: 1;
+}
+
+.breach-name {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.breach-desc {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 4px 0;
+}
+
+.breach-data {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.breach-data-type {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+}
+
+.breach-records {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    min-width: 100px;
+    text-align: right;
+}
+
+/* Recommendations */
+.dw-recs {
+    padding: 16px;
+}
+
+.rec-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    animation: fadeSlideUp 0.3s ease;
+}
+
+.rec-priority {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    min-width: 70px;
+    text-align: center;
+}
+
+.rec-priority.critical {
+    background: rgba(255, 51, 102, 0.15);
+    color: #ff3366;
+}
+
+.rec-priority.high {
+    background: rgba(255, 102, 51, 0.15);
+    color: #ff6633;
+}
+
+.rec-priority.medium {
+    background: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+}
+
+.rec-priority.low {
+    background: rgba(0, 255, 255, 0.1);
+    color: var(--cyan);
+}
+
+.rec-content {
+    flex: 1;
+}
+
+.rec-action {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.rec-detail {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

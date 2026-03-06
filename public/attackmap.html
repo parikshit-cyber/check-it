@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Live Cyber Attack Map</title>
+    <meta name="description"
+        content="Real-time visualization of global cyber attacks with animated attack arcs and live statistics." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="attackmap.css" />
+</head>
+
+<body class="attackmap-body">
+    <div class="bg-grid"></div>
+
+    <!-- Top Bar -->
+    <div class="attack-topbar">
+        <div class="attack-topbar-left">
+            <a href="/" class="attack-logo">CHECK<span style="color:var(--violet)">.</span>IT</a>
+            <span class="attack-label">⚔️ LIVE CYBER ATTACK MAP</span>
+            <span class="attack-live-badge pulse-badge">● LIVE</span>
+        </div>
+        <div class="attack-topbar-right">
+            <div class="attack-counter">
+                <span class="counter-label">ATTACKS</span>
+                <span class="counter-value" id="attack-total">0</span>
+            </div>
+            <div class="attack-counter">
+                <span class="counter-label">/ MIN</span>
+                <span class="counter-value" id="attack-rate">0</span>
+            </div>
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>INTEL</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item active"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>SECURITY</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Full-screen Map -->
+    <div class="attack-map-fullscreen" id="attack-map"></div>
+
+    <!-- Sidebar -->
+    <div class="attack-sidebar" id="attack-sidebar">
+        <!-- Attack Types -->
+        <div class="sidebar-section">
+            <div class="sidebar-title">ATTACK TYPES</div>
+            <div class="attack-type-list" id="attack-type-list"></div>
+        </div>
+
+        <!-- Top Attackers -->
+        <div class="sidebar-section">
+            <div class="sidebar-title">TOP SOURCES</div>
+            <div class="top-list" id="top-sources"></div>
+        </div>
+
+        <!-- Top Targets -->
+        <div class="sidebar-section">
+            <div class="sidebar-title">TOP TARGETS</div>
+            <div class="top-list" id="top-targets"></div>
+        </div>
+
+        <!-- Live Feed -->
+        <div class="sidebar-section live-feed-section">
+            <div class="sidebar-title">LIVE FEED</div>
+            <div class="live-feed" id="live-feed"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="attackmap.js"></script>
+</body>
+
+</html>

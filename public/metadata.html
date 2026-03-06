@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Metadata & Privacy Stripper</title>
+    <meta name="description"
+        content="Extract hidden EXIF metadata from photos — GPS, camera info, timestamps — and strip it for privacy." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="metadata.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon"><svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg></div>
+                <div class="logo-text">
+                    <h1><a href="/" style="color:inherit;text-decoration:none">CHECK<span
+                                style="color:var(--violet)">.</span>IT</a></h1>
+                    <span class="logo-subtitle">METADATA STRIPPER</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>INTEL</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>SECURITY</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>TOOLS</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item active"><span class="nav-item-icon">🧹</span>
+                            METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="meta-main">
+        <!-- Upload -->
+        <section class="panel panel-tech meta-upload-panel">
+            <div class="meta-hero">
+                <div class="meta-hero-icon">🧹</div>
+                <h2>Metadata & Privacy Stripper</h2>
+                <p>Upload an image to reveal hidden EXIF data — GPS location, camera model, software, and more</p>
+            </div>
+            <div class="meta-dropzone" id="meta-dropzone">
+                <div class="dropzone-icon">📸</div>
+                <div class="dropzone-text">Drop an image here</div>
+                <div class="dropzone-sub">or click to browse — JPEG, PNG, WebP supported</div>
+                <input type="file" id="meta-file-input" accept="image/*" hidden />
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="meta-results" id="meta-results" hidden>
+            <!-- Image Preview + Map -->
+            <div class="meta-preview-grid">
+                <div class="panel panel-tech">
+                    <div class="panel-header"><span class="panel-icon">🖼️</span>
+                        <h2>Image Preview</h2>
+                    </div>
+                    <div class="meta-image-container">
+                        <img id="meta-image-preview" alt="Uploaded image" />
+                    </div>
+                </div>
+                <div class="panel panel-tech">
+                    <div class="panel-header"><span class="panel-icon">📍</span>
+                        <h2>Photo Location</h2>
+                    </div>
+                    <div class="meta-map-container" id="meta-map-container"></div>
+                    <div class="meta-coords" id="meta-coords">No GPS data found</div>
+                </div>
+            </div>
+
+            <!-- Metadata Table -->
+            <div class="panel panel-tech">
+                <div class="panel-header">
+                    <span class="panel-icon">📋</span>
+                    <h2>Extracted Metadata</h2>
+                    <span class="meta-count" id="meta-count">0 fields</span>
+                </div>
+                <div class="meta-table-wrapper">
+                    <table class="meta-table">
+                        <thead>
+                            <tr>
+                                <th>FIELD</th>
+                                <th>VALUE</th>
+                                <th>PRIVACY RISK</th>
+                            </tr>
+                        </thead>
+                        <tbody id="meta-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="meta-actions">
+                <button class="meta-strip-btn" id="meta-strip-btn">🧹 STRIP ALL METADATA & DOWNLOAD</button>
+                <span class="meta-strip-hint">Removes all EXIF data — the downloaded image will be clean</span>
+            </div>
+        </section>
+    </main>
+
+    <footer><span>CHECK-IT | Scan. Detect. Protect BY Parikshit Singh Baghel</span></footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="metadata.js"></script>
+</body>
+
+</html>

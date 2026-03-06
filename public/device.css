@@ -1,0 +1,307 @@
+/* Device Security Scanner Styles */
+
+.device-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Scan Hero */
+.scan-hero {
+    text-align: center;
+    padding: 40px 24px;
+}
+
+.scan-hero-content h2 {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    margin: 12px 0 8px;
+}
+
+.scan-hero-content p {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+}
+
+.scan-icon-large {
+    font-size: 3rem;
+}
+
+.scan-start-btn {
+    padding: 14px 40px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+}
+
+.scan-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 255, 255, 0.25);
+}
+
+.scan-progress {
+    margin-top: 24px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+/* Score Card */
+.score-card {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 30px;
+}
+
+.score-ring {
+    position: relative;
+}
+
+.score-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-value {
+    font-family: var(--font-head);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--cyan);
+}
+
+.score-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+}
+
+.score-grade {
+    font-family: var(--font-head);
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.score-desc {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 6px;
+}
+
+/* Findings Grid */
+.findings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+}
+
+.finding-card {
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    border-left: 3px solid;
+    animation: fadeSlideUp 0.4s ease;
+}
+
+.finding-card.high,
+.finding-card.critical {
+    border-left-color: #ff3366;
+}
+
+.finding-card.medium {
+    border-left-color: #ffcc00;
+}
+
+.finding-card.low {
+    border-left-color: var(--cyan);
+}
+
+.finding-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.finding-category {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.finding-card.high .finding-category,
+.finding-card.critical .finding-category {
+    background: rgba(255, 51, 102, 0.15);
+    color: #ff3366;
+}
+
+.finding-card.medium .finding-category {
+    background: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+}
+
+.finding-card.low .finding-category {
+    background: rgba(0, 255, 255, 0.1);
+    color: var(--cyan);
+}
+
+.finding-title {
+    font-family: var(--font-head);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.finding-desc {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+}
+
+/* Device Info Grid */
+.device-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    padding: 16px;
+}
+
+.info-item {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.info-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-top: 4px;
+    word-break: break-all;
+}
+
+/* Headers Check */
+.header-url-form {
+    margin-left: auto;
+}
+
+.header-url-form .input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.header-url-form input {
+    width: 280px;
+}
+
+.headers-results {
+    padding: 16px;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.header-status {
+    font-size: 1.2rem;
+    min-width: 28px;
+    text-align: center;
+}
+
+.header-name {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text);
+    min-width: 220px;
+}
+
+.header-desc {
+    font-family: var(--font-mono);
+    font-size: 0.73rem;
+    color: var(--text-dim);
+    flex: 1;
+}
+
+.header-grade {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.header-grade-letter {
+    font-family: var(--font-head);
+    font-size: 3rem;
+    font-weight: 900;
+}
+
+.header-grade-score {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Link Intelligence Tracker</title>
+    <meta name="description"
+        content="Generate tracking links and monitor visitors in real-time with IP geolocation, device fingerprinting, and GPS tracking." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="tracker.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1><a href="/" style="color:inherit;text-decoration:none">CHECK<span
+                                style="color:var(--violet)">.</span>IT</a></h1>
+                    <span class="logo-subtitle">LINK INTELLIGENCE</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>INTEL</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>SECURITY</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>TOOLS</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item active"><span class="nav-item-icon">🔗</span>
+                            TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="tracker-main">
+        <!-- Create Link Section -->
+        <section class="panel panel-tech tracker-create-panel" id="create-panel">
+            <div class="panel-header">
+                <span class="panel-icon">🔗</span>
+                <h2>Create Tracking Link</h2>
+                <span class="panel-badge live">INTEL</span>
+            </div>
+            <div class="panel-body">
+                <form id="create-link-form" class="input-group">
+                    <input type="text" id="dest-url-input"
+                        placeholder="Enter destination URL (e.g. https://google.com)..." autocomplete="off" />
+                    <button type="submit" id="create-btn">
+                        <span class="btn-text">GENERATE</span>
+                        <span class="btn-loader" hidden>
+                            <div class="spinner small"></div>
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Link Shortener Options -->
+                <div class="shortener-options" id="shortener-options">
+                    <div class="shortener-header" id="shortener-toggle">
+                        <span class="shortener-icon">🔗</span>
+                        <span class="shortener-title">LINK SHORTENER SETTINGS</span>
+                        <span class="shortener-chevron" id="shortener-chevron">▼</span>
+                    </div>
+                    <div class="shortener-body" id="shortener-body">
+                        <div class="shortener-row">
+                            <label class="shortener-label" for="custom-alias-input">Custom Alias <span
+                                    class="label-hint">(optional)</span></label>
+                            <input type="text" id="custom-alias-input" class="shortener-input"
+                                placeholder="e.g. my-link, promo2026..." maxlength="32" autocomplete="off" />
+                        </div>
+                        <div class="shortener-row">
+                            <label class="shortener-label" for="disguise-domain-select">Disguise Domain</label>
+                            <select id="disguise-domain-select" class="shortener-select">
+                                <option value="">None (use real server URL)</option>
+                                <option value="bit.ly" selected>bit.ly</option>
+                                <option value="tinyurl.com">tinyurl.com</option>
+                                <option value="rb.gy">rb.gy</option>
+                                <option value="t.co">t.co</option>
+                                <option value="is.gd">is.gd</option>
+                                <option value="cutt.ly">cutt.ly</option>
+                                <option value="shorturl.at">shorturl.at</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result: dual link display -->
+                <div class="link-result" id="link-result" hidden>
+                    <div class="link-result-content">
+                        <!-- Disguised (share) link -->
+                        <div class="disguised-link-block" id="disguised-link-block" hidden>
+                            <span class="link-label disguised-label">📤 SHARE THIS LINK (DISGUISED):</span>
+                            <div class="link-copy-row">
+                                <code class="tracking-link disguised" id="disguised-link-display"></code>
+                                <button class="copy-btn disguise-copy" id="copy-disguised-btn">📋 COPY</button>
+                            </div>
+                            <span class="link-hint disguised-hint">⚠️ This link looks like a <span
+                                    id="disguise-domain-label"></span> URL — but it redirects through your server</span>
+                        </div>
+                        <!-- Real tracking link -->
+                        <div class="real-link-block">
+                            <span class="link-label real-label">🔒 REAL TRACKING LINK:</span>
+                            <div class="link-copy-row">
+                                <code class="tracking-link real" id="tracking-link-display"></code>
+                                <button class="copy-btn real-copy" id="copy-link-btn">📋 COPY</button>
+                            </div>
+                            <span class="link-hint">This is the actual link that records visits — share the disguised
+                                link above instead</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Links List -->
+        <section class="panel panel-tech tracker-links-panel" id="links-panel">
+            <div class="panel-header">
+                <span class="panel-icon">📋</span>
+                <h2>Active Links</h2>
+                <span class="panel-badge" id="link-count-badge">0</span>
+            </div>
+            <div class="panel-body">
+                <div class="links-list" id="links-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔗</div>
+                        <div class="empty-text">No tracking links yet. Create one above!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="tracker-dashboard" id="tracker-dashboard" hidden>
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <span class="panel-icon">📡</span>
+                    <h2>Live Intelligence Dashboard</h2>
+                    <span class="panel-badge live pulse-badge">LIVE</span>
+                </div>
+                <div class="dashboard-stats">
+                    <div class="stat-chip"><span class="stat-chip-label">VISITS</span><span class="stat-chip-value"
+                            id="dash-visit-count">0</span></div>
+                    <div class="stat-chip"><span class="stat-chip-label">UNIQUE</span><span class="stat-chip-value"
+                            id="dash-unique-count">0</span></div>
+                    <div class="stat-chip"><span class="stat-chip-label">GPS</span><span class="stat-chip-value"
+                            id="dash-gps-count">0</span></div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Map -->
+                <div class="panel panel-tech dashboard-map-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">🗺️</span>
+                        <h2>Visitor Locations</h2>
+                    </div>
+                    <div class="tracker-map-container" id="tracker-map-container"></div>
+                </div>
+
+                <!-- Device Breakdown -->
+                <div class="panel panel-tech dashboard-device-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📱</span>
+                        <h2>Device Breakdown</h2>
+                    </div>
+                    <div class="device-breakdown" id="device-breakdown">
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Desktop</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" id="fill-desktop" style="width:0%"></div>
+                            </div>
+                            <span class="breakdown-pct" id="pct-desktop">0%</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Mobile</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill mobile" id="fill-mobile" style="width:0%"></div>
+                            </div>
+                            <span class="breakdown-pct" id="pct-mobile">0%</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Tablet</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill tablet" id="fill-tablet" style="width:0%"></div>
+                            </div>
+                            <span class="breakdown-pct" id="pct-tablet">0%</span>
+                        </div>
+                    </div>
+                    <div class="browser-breakdown" id="browser-breakdown"></div>
+                </div>
+
+                <!-- Visit Log Table -->
+                <div class="panel panel-tech dashboard-log-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📊</span>
+                        <h2>Visit Log</h2>
+                    </div>
+                    <div class="visit-log-wrapper">
+                        <table class="visit-log-table">
+                            <thead>
+                                <tr>
+                                    <th>TIME</th>
+                                    <th>IP ADDRESS</th>
+                                    <th>LOCATION</th>
+                                    <th>DEVICE</th>
+                                    <th>BROWSER</th>
+                                    <th>OS</th>
+                                    <th>GPS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visit-log-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>CHECK-IT | Scan. Detect. Protect BY Parikshit Singh Baghel</span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="tracker.js"></script>
+</body>
+
+</html>

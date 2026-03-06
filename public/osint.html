@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — OSINT Operations</title>
+    <meta name="description"
+        content="Advanced OSINT intelligence gathering for usernames, websites, emails, phones, and domains." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="osint.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-hex"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>CHECK<span style="color:var(--violet)">.</span>IT</h1>
+                    <span class="logo-subtitle">OSINT_OPERATIONS</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="status-indicators">
+                <div class="status-item">
+                    <span class="status-label">SYS_STATUS</span>
+                    <span class="status-dot active"></span>
+                    <span class="status-label-value">OPERATIONAL</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">OSINT_ENGINE</span>
+                    <span class="status-dot pulse"></span>
+                    <span class="status-label-value">READY</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>INTEL</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item active"><span class="nav-item-icon">🔍</span>
+                            OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>SECURITY</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="theme-toggle" id="theme-toggle">
+                <div class="theme-toggle-track">
+                    <div class="theme-toggle-thumb"></div>
+                </div>
+            </div>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <!-- ═══════════════ OSINT INPUT SECTION ═══════════════ -->
+    <section class="osint-input-section">
+        <div class="osint-title-bar">
+            <h2 class="osint-main-title">INTELLIGENCE_GATHERING</h2>
+            <p class="osint-subtitle">Cross-vector open-source intelligence analysis</p>
+        </div>
+
+        <!-- Tab Selector -->
+        <div class="osint-tabs" id="osint-tabs">
+            <button class="osint-tab active" data-type="username">USER_ID</button>
+            <button class="osint-tab" data-type="website">WEB_ADDR</button>
+            <button class="osint-tab" data-type="email">MAIL_VEC</button>
+            <button class="osint-tab" data-type="phone">TEL_INTEL</button>
+            <button class="osint-tab" data-type="domain">DOM_RECO</button>
+        </div>
+
+        <!-- Input Bar -->
+        <form class="osint-input-bar" id="osint-form">
+            <div class="osint-input-wrapper">
+                <span class="osint-input-icon" id="osint-input-icon">🔍</span>
+                <input type="text" id="osint-input" placeholder="Initiate scan..." autocomplete="off" />
+            </div>
+            <button type="submit" id="osint-btn">INITIATE_SESSION</button>
+        </form>
+    </section>
+
+    <!-- ═══════════════ RESULTS DASHBOARD ═══════════════ -->
+    <main class="osint-results" id="osint-results" hidden>
+
+        <!-- Summary Row -->
+        <div class="osint-summary-row" id="osint-summary-row">
+            <!-- Risk Gauge -->
+            <div class="osint-card osint-gauge-card">
+                <div class="osint-gauge" id="osint-gauge">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="track" cx="60" cy="60" r="50" />
+                        <circle class="progress" cx="60" cy="60" r="50" id="gauge-progress" />
+                    </svg>
+                    <div class="gauge-text">
+                        <span class="gauge-score" id="gauge-score">0</span>
+                        <span class="gauge-label" id="gauge-label">SCORE</span>
+                    </div>
+                </div>
+                <div class="gauge-info">
+                    <h3 id="gauge-level">—</h3>
+                    <p id="gauge-summary">Run an analysis to see results</p>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="osint-card osint-quick-stats" id="osint-quick-stats"></div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="osint-charts-row" id="osint-charts-row">
+            <div class="osint-card osint-chart-card">
+                <div class="card-header"><span class="card-icon">📊</span><span class="card-title"
+                        id="chart1-title">ANALYSIS</span></div>
+                <canvas id="chart-main" height="280"></canvas>
+            </div>
+            <div class="osint-card osint-chart-card">
+                <div class="card-header"><span class="card-icon">🎯</span><span class="card-title"
+                        id="chart2-title">BREAKDOWN</span></div>
+                <canvas id="chart-secondary" height="280"></canvas>
+            </div>
+        </div>
+
+        <!-- Findings & Details -->
+        <div class="osint-details-row" id="osint-details-row">
+            <!-- Findings -->
+            <div class="osint-card" id="osint-findings-card">
+                <div class="card-header"><span class="card-icon">⚡</span><span class="card-title">FINDINGS</span></div>
+                <div id="osint-findings"></div>
+            </div>
+            <!-- Recommendations -->
+            <div class="osint-card" id="osint-recs-card">
+                <div class="card-header"><span class="card-icon">💡</span><span
+                        class="card-title">RECOMMENDATIONS</span></div>
+                <div id="osint-recommendations"></div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="osint-card osint-table-card" id="osint-table-card">
+            <div class="card-header"><span class="card-icon">📋</span><span class="card-title" id="table-title">DETAILED
+                    RESULTS</span></div>
+            <div class="osint-table-wrap" id="osint-table-content"></div>
+        </div>
+
+        <!-- Tags -->
+        <div class="osint-tags" id="osint-tags"></div>
+
+    </main>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer>
+        <span>CHECK-IT | OSINT Operations — Scan. Detect. Protect. BY Parikshit Singh Baghel</span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="osint.js"></script>
+</body>
+
+</html>

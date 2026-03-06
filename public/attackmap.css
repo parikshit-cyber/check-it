@@ -1,0 +1,300 @@
+/* ═══════════════ Live Cyber Attack Map Styles ═══════════════ */
+
+.attackmap-body {
+    overflow: hidden;
+}
+
+/* Top Bar */
+.attack-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: rgba(5, 5, 20, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.attack-topbar-left,
+.attack-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.attack-logo {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--cyan);
+    text-decoration: none;
+}
+
+.attack-label {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.attack-live-badge {
+    padding: 3px 10px;
+    background: rgba(255, 51, 102, 0.15);
+    color: #ff3366;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.pulse-badge {
+    animation: pulse-badge 1.5s ease infinite;
+}
+
+@keyframes pulse-badge {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.attack-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.counter-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.counter-value {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--cyan);
+    line-height: 1;
+}
+
+/* Full-screen Map */
+.attack-map-fullscreen {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 300px;
+    bottom: 0;
+    z-index: 1;
+}
+
+/* Sidebar */
+.attack-sidebar {
+    position: fixed;
+    top: 50px;
+    right: 0;
+    width: 300px;
+    bottom: 0;
+    background: rgba(5, 5, 20, 0.95);
+    border-left: 1px solid rgba(0, 255, 255, 0.08);
+    overflow-y: auto;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-section {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-title {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+/* Attack Type List */
+.attack-type-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.attack-type-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.attack-type-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.attack-type-name {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text);
+    flex: 1;
+}
+
+.attack-type-count {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Top Attackers / Targets */
+.top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-rank {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    min-width: 16px;
+}
+
+.top-name {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text);
+    flex: 1;
+}
+
+.top-count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--cyan);
+    font-weight: 700;
+}
+
+/* Live Feed */
+.live-feed-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.live-feed {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 300px;
+}
+
+.feed-item {
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    border-left: 2px solid;
+    animation: feedSlideIn 0.3s ease;
+}
+
+@keyframes feedSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.feed-time {
+    color: var(--text-dim);
+    margin-right: 6px;
+}
+
+.feed-type {
+    font-weight: 700;
+}
+
+.feed-route {
+    color: var(--text);
+}
+
+/* Attack Arc on Map (animated via CSS) */
+.attack-arc {
+    stroke-dasharray: 8 4;
+    animation: arc-dash 0.8s linear infinite;
+    stroke-linecap: round;
+}
+
+@keyframes arc-dash {
+    to {
+        stroke-dashoffset: -24;
+    }
+}
+
+/* Impact dot */
+.impact-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: impact-pulse 1s ease forwards;
+}
+
+@keyframes impact-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(3);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(5);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .attack-sidebar {
+        width: 200px;
+    }
+
+    .attack-map-fullscreen {
+        right: 200px;
+    }
+}

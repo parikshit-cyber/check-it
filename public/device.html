@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Device Security Scanner</title>
+    <meta name="description"
+        content="Scan your browser for security vulnerabilities, fingerprint exposure, WebRTC leaks, and privacy issues." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="device.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1><a href="/" style="color:inherit;text-decoration:none">CHECK<span
+                                style="color:var(--violet)">.</span>IT</a></h1>
+                    <span class="logo-subtitle">DEVICE SECURITY</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>INTEL</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>SECURITY</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item active"><span class="nav-item-icon">🖥️</span>
+                            DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="device-main">
+        <!-- Scan Button -->
+        <section class="panel panel-tech scan-hero">
+            <div class="scan-hero-content">
+                <div class="scan-icon-large">🖥️</div>
+                <h2>Device Security Scanner</h2>
+                <p>Scan your browser, detect privacy leaks, fingerprint exposure & security vulnerabilities</p>
+                <button class="scan-start-btn" id="scan-start-btn">
+                    <span class="btn-text">🔍 START SCAN</span>
+                    <span class="btn-loader" hidden>
+                        <div class="spinner small"></div>
+                    </span>
+                </button>
+            </div>
+            <div class="scan-progress" id="scan-progress" hidden>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progress-text">Initializing...</span>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="device-results" id="device-results" hidden>
+            <!-- Score Card -->
+            <div class="panel panel-tech score-card" id="score-card">
+                <div class="score-ring">
+                    <svg viewBox="0 0 120 120" width="120" height="120">
+                        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8" />
+                        <circle cx="60" cy="60" r="52" fill="none" stroke-width="8" stroke-linecap="round"
+                            id="score-ring-circle" stroke-dasharray="327" stroke-dashoffset="327"
+                            transform="rotate(-90 60 60)" />
+                    </svg>
+                    <div class="score-text">
+                        <span class="score-value" id="score-value">0</span>
+                        <span class="score-label">/ 100</span>
+                    </div>
+                </div>
+                <div class="score-info">
+                    <div class="score-grade" id="score-grade">—</div>
+                    <div class="score-desc" id="score-desc">Run a scan to see your score</div>
+                </div>
+            </div>
+
+            <!-- Findings Grid -->
+            <div class="findings-grid" id="findings-grid"></div>
+
+            <!-- Device Info -->
+            <div class="panel panel-tech device-info-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📋</span>
+                    <h2>Device Information</h2>
+                </div>
+                <div class="device-info-grid" id="device-info-grid"></div>
+            </div>
+
+            <!-- Security Headers -->
+            <div class="panel panel-tech headers-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">🔒</span>
+                    <h2>Security Headers Check</h2>
+                    <div class="header-url-form">
+                        <form id="header-check-form" class="input-group">
+                            <input type="text" id="header-url-input" placeholder="Enter URL to check headers..."
+                                value="https://google.com" />
+                            <button type="submit" id="header-check-btn"><span class="btn-text">CHECK</span><span
+                                    class="btn-loader" hidden>
+                                    <div class="spinner small"></div>
+                                </span></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="headers-results" id="headers-results"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer><span>CHECK-IT | Scan. Detect. Protect BY Parikshit Singh Baghel</span></footer>
+    <script src="device.js"></script>
+</body>
+
+</html>

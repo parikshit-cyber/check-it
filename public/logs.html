@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Log Analysis & Live Network Monitor</title>
+    <meta name="description"
+        content="Advanced cybersecurity log analysis with vulnerability detection, live network monitoring, and detailed forensic reports." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="logs.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-hex"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>CHECK<span style="color:var(--violet)">.</span>IT</h1>
+                    <span class="logo-subtitle">LOG_ANALYSIS</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="status-indicators">
+                <div class="status-item">
+                    <span class="status-label">SYS_STATUS</span>
+                    <span class="status-dot active"></span>
+                    <span class="status-label-value">OPERATIONAL</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">LOG_ENGINE</span>
+                    <span class="status-dot pulse"></span>
+                    <span class="status-label-value">READY</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>INTEL</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item"><span class="nav-item-icon">🌐</span> NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>SECURITY</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item active"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="theme-toggle" id="theme-toggle">
+                <div class="theme-toggle-track">
+                    <div class="theme-toggle-thumb"></div>
+                </div>
+            </div>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <!-- ═══════════════ MODE TABS ═══════════════ -->
+    <div class="mode-tabs-bar">
+        <button class="mode-tab active" data-mode="upload" id="tab-upload">
+            <span class="mode-tab-icon">📁</span>
+            <span class="mode-tab-text">FILE_UPLOAD</span>
+            <span class="mode-tab-sub">Analyze log files</span>
+        </button>
+        <button class="mode-tab" data-mode="live" id="tab-live">
+            <span class="mode-tab-icon">📡</span>
+            <span class="mode-tab-text">LIVE_MONITOR</span>
+            <span class="mode-tab-sub">Real-time network capture</span>
+        </button>
+    </div>
+
+    <!-- ═══════════════ FILE UPLOAD MODE ═══════════════ -->
+    <section class="log-upload-section" id="log-upload-section">
+        <div class="log-title-bar">
+            <h2 class="log-main-title">LOG_ANALYSIS</h2>
+            <p class="log-subtitle">Upload network, firewall, system, or auth logs for deep cybersecurity analysis</p>
+        </div>
+
+        <div class="log-format-bar">
+            <span class="format-label">FORMAT:</span>
+            <div class="format-options" id="format-options">
+                <button class="format-btn active" data-format="auto">AUTO_DETECT</button>
+                <button class="format-btn" data-format="apache">APACHE/NGINX</button>
+                <button class="format-btn" data-format="firewall">FIREWALL</button>
+                <button class="format-btn" data-format="syslog">SYSLOG</button>
+                <button class="format-btn" data-format="auth">AUTH_LOG</button>
+                <button class="format-btn" data-format="csv">CSV</button>
+                <button class="format-btn" data-format="json">JSON</button>
+            </div>
+        </div>
+
+        <div class="log-dropzone" id="log-dropzone">
+            <div class="dropzone-visual">
+                <div class="dropzone-icon-wrap">
+                    <svg class="dropzone-icon-svg" viewBox="0 0 80 80" width="64" height="64">
+                        <rect x="15" y="10" width="50" height="60" rx="4" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" opacity="0.6" />
+                        <line x1="25" y1="30" x2="55" y2="30" stroke="var(--cyan)" stroke-width="1.5" opacity="0.4" />
+                        <line x1="25" y1="38" x2="50" y2="38" stroke="var(--cyan)" stroke-width="1.5" opacity="0.3" />
+                        <line x1="25" y1="46" x2="55" y2="46" stroke="var(--magenta)" stroke-width="1.5"
+                            opacity="0.5" />
+                        <line x1="25" y1="54" x2="45" y2="54" stroke="var(--cyan)" stroke-width="1.5" opacity="0.3" />
+                        <circle cx="60" cy="55" r="14" fill="var(--bg-primary)" stroke="var(--cyan)" stroke-width="2" />
+                        <path d="M54 55h12M60 49v12" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div class="dropzone-text-content">
+                    <div class="dropzone-text-main">Drop log file here</div>
+                    <div class="dropzone-text-sub">or <span class="dropzone-browse">click to browse</span></div>
+                    <div class="dropzone-text-formats">.log • .txt • .csv • .json</div>
+                </div>
+            </div>
+            <input type="file" id="log-file-input" accept=".log,.txt,.csv,.json,.evtx" hidden />
+        </div>
+
+        <div class="log-loading" id="log-loading" hidden>
+            <div class="log-loading-inner">
+                <div class="log-loading-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring delay"></div>
+                </div>
+                <div class="log-loading-text">
+                    <span class="loading-title">Analyzing log entries...</span>
+                    <span class="loading-sub" id="loading-status">Parsing format and detecting threats</span>
+                </div>
+            </div>
+            <div class="loading-progress-bar">
+                <div class="loading-progress-fill" id="loading-progress"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ FILE UPLOAD RESULTS ═══════════════ -->
+    <main class="log-results" id="log-results" hidden>
+        <div class="log-summary-row">
+            <div class="log-card log-gauge-card">
+                <div class="log-gauge" id="log-gauge">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="track" cx="60" cy="60" r="50" />
+                        <circle class="progress" cx="60" cy="60" r="50" id="gauge-progress" />
+                    </svg>
+                    <div class="gauge-text">
+                        <span class="gauge-score" id="gauge-score">0</span>
+                        <span class="gauge-label">RISK</span>
+                    </div>
+                </div>
+                <div class="gauge-info">
+                    <h3 id="gauge-level">—</h3>
+                    <p id="gauge-summary">Upload a log file to begin analysis</p>
+                </div>
+            </div>
+            <div class="log-card log-quick-stats" id="log-quick-stats">
+                <div class="stat-block"><span class="stat-block-value" id="stat-total">0</span><span
+                        class="stat-block-label">TOTAL ENTRIES</span></div>
+                <div class="stat-block threats"><span class="stat-block-value" id="stat-threats">0</span><span
+                        class="stat-block-label">THREATS FOUND</span></div>
+                <div class="stat-block critical"><span class="stat-block-value" id="stat-critical">0</span><span
+                        class="stat-block-label">CRITICAL</span></div>
+                <div class="stat-block high"><span class="stat-block-value" id="stat-high">0</span><span
+                        class="stat-block-label">HIGH</span></div>
+                <div class="stat-block medium"><span class="stat-block-value" id="stat-medium">0</span><span
+                        class="stat-block-label">MEDIUM</span></div>
+                <div class="stat-block clean"><span class="stat-block-value" id="stat-clean">0</span><span
+                        class="stat-block-label">CLEAN</span></div>
+            </div>
+            <div class="log-card log-format-info">
+                <div class="card-header"><span class="card-icon">📋</span><span class="card-title">FILE INFO</span>
+                </div>
+                <div class="format-detail">
+                    <div class="format-kv"><span class="kv-label">FORMAT</span><span class="kv-value"
+                            id="info-format">—</span></div>
+                    <div class="format-kv"><span class="kv-label">ANALYZED</span><span class="kv-value"
+                            id="info-time">—</span></div>
+                    <div class="format-kv"><span class="kv-label">ENTRIES</span><span class="kv-value"
+                            id="info-entries">—</span></div>
+                    <div class="format-kv"><span class="kv-label">RISK LEVEL</span><span class="kv-value"
+                            id="info-risk">—</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="log-charts-row">
+            <div class="log-card log-chart-card">
+                <div class="card-header"><span class="card-icon">📊</span><span class="card-title">SEVERITY
+                        DISTRIBUTION</span></div><canvas id="chart-severity" height="280"></canvas>
+            </div>
+            <div class="log-card log-chart-card">
+                <div class="card-header"><span class="card-icon">🎯</span><span class="card-title">THREAT
+                        CATEGORIES</span></div><canvas id="chart-threats" height="280"></canvas>
+            </div>
+            <div class="log-card log-chart-card">
+                <div class="card-header"><span class="card-icon">⏱️</span><span class="card-title">EVENT TIMELINE</span>
+                </div><canvas id="chart-timeline" height="280"></canvas>
+            </div>
+        </div>
+        <div class="log-intel-row">
+            <div class="log-card" id="log-top-ips-card">
+                <div class="card-header"><span class="card-icon">🌐</span><span class="card-title">TOP SOURCE IPs</span>
+                </div>
+                <div id="log-top-ips"></div>
+            </div>
+            <div class="log-card" id="log-mitre-card">
+                <div class="card-header"><span class="card-icon">🛡️</span><span class="card-title">MITRE ATT&CK
+                        MAPPING</span></div>
+                <div id="log-mitre"></div>
+            </div>
+        </div>
+        <div class="log-card log-table-card" id="log-table-card">
+            <div class="card-header">
+                <span class="card-icon">📑</span><span class="card-title">LOG ENTRIES</span>
+                <div class="table-controls">
+                    <select id="table-filter-severity" class="table-filter">
+                        <option value="all">ALL SEVERITY</option>
+                        <option value="critical">CRITICAL</option>
+                        <option value="high">HIGH</option>
+                        <option value="medium">MEDIUM</option>
+                        <option value="low">LOW</option>
+                        <option value="info">INFO</option>
+                    </select>
+                    <input type="text" id="table-search" class="table-search" placeholder="Search entries..." />
+                </div>
+            </div>
+            <div class="log-table-wrap">
+                <table class="log-table" id="log-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="lineNumber">#</th>
+                            <th class="sortable" data-sort="timestamp">TIMESTAMP</th>
+                            <th class="sortable" data-sort="sourceIP">SOURCE IP</th>
+                            <th class="sortable" data-sort="method">METHOD</th>
+                            <th>PATH / MESSAGE</th>
+                            <th class="sortable" data-sort="severity">SEVERITY</th>
+                            <th>THREATS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-table-body"></tbody>
+                </table>
+            </div>
+            <div class="table-pagination" id="table-pagination"></div>
+        </div>
+        <div class="new-scan-wrap"><button class="new-scan-btn" id="new-scan-btn">⟳ NEW SCAN</button></div>
+    </main>
+
+    <!-- ═══════════════ LIVE NETWORK MONITOR MODE ═══════════════ -->
+    <section class="live-monitor-section" id="live-monitor-section" hidden>
+
+        <!-- Live Controls -->
+        <div class="live-controls-bar">
+            <div class="live-controls-left">
+                <button class="live-ctrl-btn start" id="live-start-btn">
+                    <span class="ctrl-icon">▶</span> START CAPTURE
+                </button>
+                <button class="live-ctrl-btn stop" id="live-stop-btn" disabled>
+                    <span class="ctrl-icon">■</span> STOP
+                </button>
+                <button class="live-ctrl-btn clear" id="live-clear-btn">
+                    <span class="ctrl-icon">✕</span> CLEAR
+                </button>
+            </div>
+            <div class="live-controls-center">
+                <div class="live-indicator" id="live-indicator">
+                    <span class="live-dot"></span>
+                    <span class="live-text" id="live-status-text">IDLE</span>
+                </div>
+                <span class="live-packet-counter" id="live-packet-counter">0 packets</span>
+            </div>
+            <div class="live-controls-right">
+                <select class="live-filter-select" id="live-proto-filter">
+                    <option value="all">ALL PROTOCOLS</option>
+                    <option value="HTTP">HTTP</option>
+                    <option value="HTTPS">HTTPS/TLS</option>
+                    <option value="DNS">DNS</option>
+                    <option value="TCP">TCP</option>
+                    <option value="UDP">UDP</option>
+                    <option value="ICMP">ICMP</option>
+                    <option value="SSH">SSH</option>
+                    <option value="FTP">FTP</option>
+                </select>
+                <input type="text" class="live-search" id="live-search" placeholder="Filter packets..." />
+            </div>
+        </div>
+
+        <!-- Live Dashboard Grid -->
+        <div class="live-dashboard">
+
+            <!-- Row 1: Stats -->
+            <div class="live-stats-bar">
+                <div class="live-stat-card">
+                    <span class="live-stat-value" id="ls-total-packets">0</span>
+                    <span class="live-stat-label">PACKETS</span>
+                </div>
+                <div class="live-stat-card threats">
+                    <span class="live-stat-value" id="ls-threats">0</span>
+                    <span class="live-stat-label">THREATS</span>
+                </div>
+                <div class="live-stat-card">
+                    <span class="live-stat-value" id="ls-connections">0</span>
+                    <span class="live-stat-label">CONNECTIONS</span>
+                </div>
+                <div class="live-stat-card">
+                    <span class="live-stat-value" id="ls-bandwidth">0 B/s</span>
+                    <span class="live-stat-label">BANDWIDTH</span>
+                </div>
+                <div class="live-stat-card">
+                    <span class="live-stat-value" id="ls-dns">0</span>
+                    <span class="live-stat-label">DNS QUERIES</span>
+                </div>
+                <div class="live-stat-card">
+                    <span class="live-stat-value" id="ls-secure">0%</span>
+                    <span class="live-stat-label">ENCRYPTED</span>
+                </div>
+            </div>
+
+            <!-- Row 2: Charts + Website Security -->
+            <div class="live-charts-row">
+                <!-- Protocol Distribution -->
+                <div class="log-card live-chart-card">
+                    <div class="card-header"><span class="card-icon">🔬</span><span class="card-title">PROTOCOL
+                            DISTRIBUTION</span></div>
+                    <canvas id="live-chart-proto" height="240"></canvas>
+                </div>
+                <!-- Traffic Timeline -->
+                <div class="log-card live-chart-card">
+                    <div class="card-header"><span class="card-icon">📈</span><span class="card-title">TRAFFIC
+                            TIMELINE</span>
+                        <span class="live-badge">LIVE</span>
+                    </div>
+                    <canvas id="live-chart-traffic" height="240"></canvas>
+                </div>
+                <!-- Website Security -->
+                <div class="log-card live-chart-card">
+                    <div class="card-header"><span class="card-icon">🌐</span><span class="card-title">WEBSITE
+                            SECURITY</span></div>
+                    <div class="website-security-list" id="website-security-list">
+                        <div class="ws-empty">Start capture to monitor connections</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Active Connections + Threat Feed -->
+            <div class="live-intel-row">
+                <!-- Active Connections -->
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">🔗</span><span class="card-title">ACTIVE
+                            CONNECTIONS</span>
+                        <span class="conn-count" id="conn-count">0</span>
+                    </div>
+                    <div class="active-conn-list" id="active-conn-list">
+                        <div class="ws-empty">No connections yet</div>
+                    </div>
+                </div>
+                <!-- Live Threat Feed -->
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">⚠️</span><span class="card-title">THREAT
+                            FEED</span>
+                        <span class="live-badge danger">LIVE</span>
+                    </div>
+                    <div class="threat-feed-list" id="threat-feed-list">
+                        <div class="ws-empty">No threats detected</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Live Packet Table (Wireshark-style) -->
+            <div class="log-card live-packet-table-card">
+                <div class="card-header">
+                    <span class="card-icon">📡</span>
+                    <span class="card-title">PACKET CAPTURE</span>
+                    <span class="live-badge">LIVE</span>
+                    <label class="autoscroll-toggle">
+                        <input type="checkbox" id="live-autoscroll" checked />
+                        <span>Auto-scroll</span>
+                    </label>
+                </div>
+                <div class="live-packet-wrap" id="live-packet-wrap">
+                    <table class="live-packet-table" id="live-packet-table">
+                        <thead>
+                            <tr>
+                                <th>NO.</th>
+                                <th>TIME</th>
+                                <th>SOURCE</th>
+                                <th>DESTINATION</th>
+                                <th>PROTOCOL</th>
+                                <th>LENGTH</th>
+                                <th>INFO</th>
+                                <th>SECURITY</th>
+                            </tr>
+                        </thead>
+                        <tbody id="live-packet-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ ENTRY DETAIL OVERLAY ═══════════════ -->
+    <section class="entry-fullscreen" id="entry-fullscreen" hidden>
+        <div class="entry-full-header">
+            <div class="entry-full-title">
+                <span class="panel-icon">🔍</span>
+                <h2>Log Entry Analysis</h2>
+                <span class="entry-id-badge" id="entry-id-badge"></span>
+            </div>
+            <button class="ip-close-btn" id="entry-close-btn">✕ CLOSE</button>
+        </div>
+        <div class="entry-full-body">
+            <div class="entry-full-left">
+                <div class="log-card entry-risk-card" id="entry-risk-overview"></div>
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">📝</span><span class="card-title">RAW LOG
+                            ENTRY</span></div>
+                    <pre class="raw-log-display" id="entry-raw"></pre>
+                </div>
+                <div class="log-card" id="entry-parsed-card">
+                    <div class="card-header"><span class="card-icon">🔧</span><span class="card-title">PARSED
+                            FIELDS</span></div>
+                    <div id="entry-parsed"></div>
+                </div>
+                <div class="log-card" id="entry-iocs-card">
+                    <div class="card-header"><span class="card-icon">🎯</span><span class="card-title">INDICATORS OF
+                            COMPROMISE</span></div>
+                    <div id="entry-iocs"></div>
+                </div>
+            </div>
+            <div class="entry-full-right">
+                <div id="entry-vulnerabilities"></div>
+                <div class="log-card" id="entry-recs-card">
+                    <div class="card-header"><span class="card-icon">💡</span><span
+                            class="card-title">RECOMMENDATIONS</span></div>
+                    <div id="entry-recommendations"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ PACKET DETAIL OVERLAY ═══════════════ -->
+    <section class="entry-fullscreen" id="packet-detail-overlay" hidden>
+        <div class="entry-full-header">
+            <div class="entry-full-title">
+                <span class="panel-icon">📡</span>
+                <h2>Packet Analysis</h2>
+                <span class="entry-id-badge" id="pkt-id-badge"></span>
+            </div>
+            <button class="ip-close-btn" id="pkt-close-btn">✕ CLOSE</button>
+        </div>
+        <div class="entry-full-body">
+            <div class="entry-full-left">
+                <div class="log-card entry-risk-card" id="pkt-risk-overview"></div>
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">📋</span><span class="card-title">CONNECTION
+                            DETAILS</span></div>
+                    <div id="pkt-conn-details"></div>
+                </div>
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">🔐</span><span class="card-title">SECURITY
+                            ANALYSIS</span></div>
+                    <div id="pkt-security"></div>
+                </div>
+            </div>
+            <div class="entry-full-right">
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">⚠️</span><span class="card-title">VULNERABILITY
+                            ASSESSMENT</span></div>
+                    <div id="pkt-vulnerabilities"></div>
+                </div>
+                <div class="log-card">
+                    <div class="card-header"><span class="card-icon">💡</span><span
+                            class="card-title">RECOMMENDATIONS</span></div>
+                    <div id="pkt-recommendations"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span>CHECK-IT | Log Analysis & Network Monitor — Scan. Detect. Protect. BY Parikshit Singh Baghel</span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="logs.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHECK-IT — Network Scanner</title>
+    <meta name="description"
+        content="DNS leak test, SSL/TLS certificate analysis, port scan simulation, and global latency testing." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="network.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header id="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon"><svg viewBox="0 0 40 40" width="32" height="32">
+                        <rect x="8" y="8" width="24" height="24" rx="2" fill="none" stroke="var(--cyan)"
+                            stroke-width="2" />
+                        <path d="M14 20l4 4 8-8" fill="none" stroke="var(--cyan)" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg></div>
+                <div class="logo-text">
+                    <h1><a href="/" style="color:inherit;text-decoration:none">CHECK<span
+                                style="color:var(--violet)">.</span>IT</a></h1>
+                    <span class="logo-subtitle">NETWORK SCANNER</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/" class="nav-link"><span class="nav-link-text">DASHBOARD</span></a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger has-active"><span>INTEL</span><span
+                            class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/osint" class="nav-dropdown-item"><span class="nav-item-icon">🔍</span> OSINT</a>
+                        <a href="/network" class="nav-dropdown-item active"><span class="nav-item-icon">🌐</span>
+                            NETWORK</a>
+                        <a href="/attackmap" class="nav-dropdown-item"><span class="nav-item-icon">⚔️</span>
+                            ATTACK_MAP</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>SECURITY</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/device" class="nav-dropdown-item"><span class="nav-item-icon">🖥️</span> DEVICE</a>
+                        <a href="/darkweb" class="nav-dropdown-item"><span class="nav-item-icon">🕵️</span> DARKWEB</a>
+                        <a href="/logs" class="nav-dropdown-item"><span class="nav-item-icon">📋</span> LOGS</a>
+                    </div>
+                </div>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-trigger"><span>TOOLS</span><span class="nav-chevron">▼</span></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="/tracker" class="nav-dropdown-item"><span class="nav-item-icon">🔗</span> TRACKER</a>
+                        <a href="/metadata" class="nav-dropdown-item"><span class="nav-item-icon">🧹</span> METADATA</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="clock" id="live-clock">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="net-main">
+        <!-- Tabs -->
+        <div class="net-tabs">
+            <button class="net-tab active" data-tab="dns">🌐 DNS Leak Test</button>
+            <button class="net-tab" data-tab="ports">📡 Port Scanner</button>
+            <button class="net-tab" data-tab="ssl">🔒 SSL/TLS Check</button>
+            <button class="net-tab" data-tab="latency">⚡ Latency Test</button>
+        </div>
+
+        <!-- DNS Tab -->
+        <section class="net-panel" id="tab-dns">
+            <div class="panel panel-tech">
+                <div class="panel-header"><span class="panel-icon">🌐</span>
+                    <h2>DNS Leak Test</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="tab-desc">Test if your DNS queries are leaking to third-party resolvers. This can expose
+                        your browsing activity.</p>
+                    <form id="dns-form" class="input-group">
+                        <input type="text" id="dns-domain" placeholder="Domain to test (default: example.com)"
+                            value="example.com" />
+                        <button type="submit" id="dns-btn"><span class="btn-text">TEST</span><span class="btn-loader"
+                                hidden>
+                                <div class="spinner small"></div>
+                            </span></button>
+                    </form>
+                    <div id="dns-results"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ports Tab -->
+        <section class="net-panel" id="tab-ports" hidden>
+            <div class="panel panel-tech">
+                <div class="panel-header"><span class="panel-icon">📡</span>
+                    <h2>Port Scanner</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="tab-desc">Simulates scanning common ports to identify potential vulnerabilities and
+                        exposed services.</p>
+                    <form id="port-form" class="input-group">
+                        <input type="text" id="port-target" placeholder="Target (default: current server)"
+                            value="localhost" />
+                        <button type="submit" id="port-btn"><span class="btn-text">SCAN PORTS</span><span
+                                class="btn-loader" hidden>
+                                <div class="spinner small"></div>
+                            </span></button>
+                    </form>
+                    <div id="port-results"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SSL Tab -->
+        <section class="net-panel" id="tab-ssl" hidden>
+            <div class="panel panel-tech">
+                <div class="panel-header"><span class="panel-icon">🔒</span>
+                    <h2>SSL/TLS Certificate Checker</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="tab-desc">Analyze SSL/TLS certificate validity, protocol version, cipher suite, and
+                        expiration status.</p>
+                    <form id="ssl-form" class="input-group">
+                        <input type="text" id="ssl-hostname" placeholder="Enter hostname (e.g. google.com)"
+                            value="google.com" />
+                        <button type="submit" id="ssl-btn"><span class="btn-text">CHECK SSL</span><span
+                                class="btn-loader" hidden>
+                                <div class="spinner small"></div>
+                            </span></button>
+                    </form>
+                    <div id="ssl-results"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latency Tab -->
+        <section class="net-panel" id="tab-latency" hidden>
+            <div class="panel panel-tech">
+                <div class="panel-header"><span class="panel-icon">⚡</span>
+                    <h2>Global Latency Test</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="tab-desc">Measure round-trip latency to global cloud providers and CDNs.</p>
+                    <button class="scan-start-btn" id="latency-btn">
+                        <span class="btn-text">⚡ RUN LATENCY TEST</span>
+                        <span class="btn-loader" hidden>
+                            <div class="spinner small"></div>
+                        </span>
+                    </button>
+                    <div class="latency-map-container" id="latency-map-container"></div>
+                    <div id="latency-results"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer><span>CHECK-IT | Scan. Detect. Protect BY Parikshit Singh Baghel</span></footer>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="network.js"></script>
+</body>
+
+</html>
