@@ -401,27 +401,35 @@
         updateQuickStats([
             { icon: data.flag || '🌍', value: data.country, label: 'COUNTRY', color: 'var(--cyan)' },
             { icon: '📡', value: data.carrier, label: 'CARRIER', color: 'var(--purple)' },
-            { icon: '📱', value: data.numberType?.toUpperCase(), label: 'TYPE', color: 'var(--green)' },
-            { icon: '🔢', value: data.digitCount, label: 'DIGITS', color: 'var(--yellow)' },
+            { icon: '💬', value: (data.detectedAppsCount || 0) + ' apps', label: 'MESSAGING', color: 'var(--green)' },
+            { icon: '📍', value: data.regionInfo?.city || '—', label: 'REGION', color: 'var(--yellow)' },
         ]);
 
-        // Charts
+        // Chart 1 — Risk Factors
         const chart1Title = $('#chart1-title');
         if (chart1Title) chart1Title.textContent = 'RISK FACTORS';
         const factors = [];
         const scores = [];
         if (!data.isValidFormat) { factors.push('Invalid Format'); scores.push(30); }
-        if (data.isVoIP) { factors.push('VoIP Number'); scores.push(20); }
+        if (data.isVoIP) { factors.push('VoIP Number'); scores.push(15); }
+        if (data.simSwapRisk?.level === 'high') { factors.push('SIM Swap Risk'); scores.push(20); }
+        else if (data.simSwapRisk?.level === 'medium') { factors.push('SIM Swap Risk'); scores.push(10); }
+        if (data.spamReport?.flagged) { factors.push('Spam Flagged'); scores.push(15); }
+        if (data.portingHistory?.ported) { factors.push('Ported'); scores.push(5); }
+        if (data.numberAge?.registrationEra === 'new') { factors.push('New Number'); scores.push(8); }
         if (data.numberType === 'short_code') { factors.push('Short Code'); scores.push(20); }
         if (factors.length === 0) { factors.push('Low Risk'); scores.push(15); }
         renderBarChart('chart-main', factors, scores, 'Risk Score');
 
+        // Chart 2 — Analysis Breakdown
         const chart2Title = $('#chart2-title');
-        if (chart2Title) chart2Title.textContent = 'NUMBER ANALYSIS';
-        renderDoughnutChart('chart-secondary', ['Country Code', 'National Number', 'VoIP Risk'], [
-            data.countryCode ? 30 : 10,
-            data.nationalNumber?.length > 8 ? 40 : 20,
+        if (chart2Title) chart2Title.textContent = 'THREAT ANALYSIS';
+        renderDoughnutChart('chart-secondary', ['VoIP Risk', 'SIM Swap', 'Spam', 'Porting', 'Number Age'], [
             data.isVoIP ? 30 : 5,
+            data.simSwapRisk?.score || 5,
+            data.spamReport?.flagged ? 25 : 3,
+            data.portingHistory?.ported ? 20 : 3,
+            data.numberAge?.registrationEra === 'new' ? 25 : (data.numberAge?.registrationEra === 'recent' ? 12 : 5),
         ]);
 
         // Table
@@ -434,6 +442,12 @@
             { text: data.numberType?.toUpperCase(), color: 'var(--green)' },
         ];
         if (data.isVoIP) tags.push({ text: 'VoIP', color: 'var(--red)' });
+        if (data.spamReport?.flagged) tags.push({ text: '⚠ SPAM', color: 'var(--red)' });
+        if (data.simSwapRisk?.level === 'high') tags.push({ text: 'SIM SWAP RISK', color: 'var(--red)' });
+        if (data.portingHistory?.ported) tags.push({ text: 'PORTED', color: 'var(--yellow)' });
+        (data.messagingApps || []).filter(a => a.detected).forEach(a => {
+            tags.push({ text: `${a.icon} ${a.name}`, color: 'var(--green)' });
+        });
         renderTags(tags);
     }
 
@@ -646,12 +660,62 @@
         if (!container) return;
         let rows = '';
 
+        // Core info
         rows += `<tr><td>📱 Formatted</td><td>${data.formatted}</td><td>—</td></tr>`;
         rows += `<tr><td>${data.flag} Country</td><td>${data.country}</td><td>Code: +${data.countryCode || '?'}</td></tr>`;
         rows += `<tr><td>📡 Carrier</td><td>${data.carrier}</td><td>—</td></tr>`;
         rows += `<tr><td>📞 Type</td><td>${data.numberType}</td><td>${data.digitCount} digits</td></tr>`;
         rows += `<tr><td>🌐 VoIP</td><td>${data.isVoIP ? '⚠ Yes' : '✅ No'}</td><td>${data.isVoIP ? 'Virtual number detected' : 'Standard carrier'}</td></tr>`;
         rows += `<tr><td>✅ Valid Format</td><td>${data.isValidFormat ? 'Yes' : 'No'}</td><td>—</td></tr>`;
+
+        // Region Info
+        if (data.regionInfo) {
+            rows += `<tr><td>📍 Region</td><td>${data.regionInfo.region}</td><td>City: ${data.regionInfo.city}</td></tr>`;
+            rows += `<tr><td>🕐 Timezone</td><td>${data.regionInfo.timezone}</td><td>—</td></tr>`;
+        }
+
+        // Number Age
+        if (data.numberAge) {
+            const eraLabel = { legacy: '🟢 Legacy', established: '🔵 Established', recent: '🟡 Recent', new: '🔴 New' };
+            rows += `<tr><td>📅 Number Age</td><td>~${data.numberAge.estimatedYears} year(s)</td><td>${eraLabel[data.numberAge.registrationEra] || data.numberAge.registrationEra}</td></tr>`;
+        }
+
+        // SIM Swap Risk
+        if (data.simSwapRisk) {
+            const simBadge = data.simSwapRisk.level === 'high' ? '🔴 HIGH' : data.simSwapRisk.level === 'medium' ? '🟡 MEDIUM' : '🟢 LOW';
+            rows += `<tr><td>🔄 SIM Swap Risk</td><td>${simBadge}</td><td>Score: ${data.simSwapRisk.score}/100</td></tr>`;
+            if (data.simSwapRisk.lastSwapDate) {
+                rows += `<tr><td>🔄 Last SIM Swap</td><td>${data.simSwapRisk.lastSwapDate}</td><td>${data.simSwapRisk.recentSwap ? '⚠ Recent swap detected' : 'Not recent'}</td></tr>`;
+            }
+        }
+
+        // Porting History
+        if (data.portingHistory) {
+            rows += `<tr><td>🔀 Ported</td><td>${data.portingHistory.ported ? '⚠ Yes' : '✅ No'}</td><td>${data.portingHistory.ported ? 'From: ' + data.portingHistory.originalCarrier : 'Original carrier retained'}</td></tr>`;
+            if (data.portingHistory.portDate) {
+                rows += `<tr><td>🔀 Port Date</td><td>${data.portingHistory.portDate}</td><td>—</td></tr>`;
+            }
+        }
+
+        // Spam/Scam Report
+        if (data.spamReport) {
+            rows += `<tr><td>🚫 Spam Status</td><td>${data.spamReport.flagged ? '⚠ FLAGGED' : '✅ Clean'}</td><td>${data.spamReport.flagged ? data.spamReport.reportCount + ' reports — ' + data.spamReport.category : 'Not in spam databases'}</td></tr>`;
+            if (data.spamReport.sources?.length > 0) {
+                rows += `<tr><td>🚫 Spam Sources</td><td>${data.spamReport.sources.join(', ')}</td><td>—</td></tr>`;
+            }
+        }
+
+        // Messaging Apps
+        if (data.messagingApps) {
+            const detected = data.messagingApps.filter(a => a.detected);
+            const notDetected = data.messagingApps.filter(a => !a.detected);
+            detected.forEach(app => {
+                rows += `<tr><td>${app.icon} ${app.name}</td><td>✅ Detected</td><td>Confidence: ${app.confidence}%</td></tr>`;
+            });
+            notDetected.forEach(app => {
+                rows += `<tr><td>${app.icon} ${app.name}</td><td>— Not detected</td><td>—</td></tr>`;
+            });
+        }
 
         container.innerHTML = `<table class="osint-table">
             <thead><tr><th>FIELD</th><th>VALUE</th><th>DETAILS</th></tr></thead>

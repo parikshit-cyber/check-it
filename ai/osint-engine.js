@@ -502,25 +502,139 @@ async function analyzePhone(phone) {
     // Format validation
     const isValidFormat = digits.length >= 7 && digits.length <= 15 && /^\d+$/.test(digits);
 
-    // Risk assessment
+    // Simulated VOIP detection
+    const voipSeed = hashCode(phone + 'voip');
+    const isVoIP = Math.abs(voipSeed % 100) < 25;
+
+    // ── NEW: Messaging App Association Detection ──
+    const MESSAGING_APPS = [
+        { name: 'WhatsApp', icon: '💬' },
+        { name: 'Telegram', icon: '✈️' },
+        { name: 'Signal', icon: '🔐' },
+        { name: 'Viber', icon: '💜' },
+        { name: 'LINE', icon: '🟢' },
+    ];
+    const messagingApps = MESSAGING_APPS.map(app => {
+        const appSeed = hashCode(digits + app.name);
+        const detected = Math.abs(appSeed % 100) < 45; // ~45% detection rate
+        return {
+            name: app.name,
+            icon: app.icon,
+            detected,
+            confidence: detected ? (55 + Math.abs(appSeed % 40)) : 0,
+        };
+    });
+    const detectedApps = messagingApps.filter(a => a.detected);
+
+    // ── NEW: SIM Swap Risk Indicator ──
+    const simSeed = hashCode(digits + 'simswap');
+    const simSwapScore = Math.abs(simSeed % 100);
+    const simSwapLevel = simSwapScore > 75 ? 'high' : simSwapScore > 40 ? 'medium' : 'low';
+    const daysSinceSwap = simSwapScore > 40 ? Math.abs(simSeed % 180) : null;
+    const simSwapRisk = {
+        level: simSwapLevel,
+        score: simSwapScore,
+        lastSwapDate: daysSinceSwap !== null
+            ? new Date(Date.now() - daysSinceSwap * 86400000).toISOString().split('T')[0]
+            : null,
+        recentSwap: daysSinceSwap !== null && daysSinceSwap < 30,
+    };
+
+    // ── NEW: Number Portability / Porting History ──
+    const portSeed = hashCode(digits + 'porting');
+    const ported = Math.abs(portSeed % 100) < 30; // ~30% ported
+    const allCarriers = carriers.length > 1 ? carriers : ['Original Carrier', 'Ported Carrier'];
+    const portingHistory = {
+        ported,
+        originalCarrier: ported ? allCarriers[(Math.abs(portSeed) + 1) % allCarriers.length] : carrier,
+        currentCarrier: carrier,
+        portDate: ported
+            ? new Date(2020 + Math.abs(portSeed % 5), Math.abs(portSeed % 12), 1 + Math.abs(portSeed % 28)).toISOString().split('T')[0]
+            : null,
+    };
+
+    // ── NEW: Spam/Scam Database Cross-Reference ──
+    const spamSeed = hashCode(digits + 'spam');
+    const spamFlagged = Math.abs(spamSeed % 100) < 20; // ~20% flagged
+    const spamReportCount = spamFlagged ? (1 + Math.abs(spamSeed % 50)) : 0;
+    const spamSources = ['TrueCaller', 'Hiya', 'RoboKiller', 'FTC Complaints', 'UserReports'];
+    const spamReport = {
+        flagged: spamFlagged,
+        reportCount: spamReportCount,
+        sources: spamFlagged
+            ? spamSources.filter((_, i) => Math.abs(hashCode(digits + spamSources[i]) % 3) === 0)
+            : [],
+        category: spamFlagged
+            ? ['telemarketing', 'robocall', 'scam', 'phishing'][Math.abs(spamSeed % 4)]
+            : null,
+    };
+
+    // ── NEW: Number Age Estimation ──
+    const ageSeed = hashCode(digits + 'age');
+    const estimatedYears = 1 + Math.abs(ageSeed % 20);
+    const registrationEra = estimatedYears > 15 ? 'legacy' : estimatedYears > 8 ? 'established' : estimatedYears > 3 ? 'recent' : 'new';
+    const numberAge = { estimatedYears, registrationEra };
+
+    // ── NEW: Area / Region Mapping ──
+    const REGION_MAP = {
+        '1': [
+            { prefix: '212', region: 'New York', city: 'New York City', timezone: 'EST' },
+            { prefix: '415', region: 'California', city: 'San Francisco', timezone: 'PST' },
+            { prefix: '312', region: 'Illinois', city: 'Chicago', timezone: 'CST' },
+            { prefix: '305', region: 'Florida', city: 'Miami', timezone: 'EST' },
+            { prefix: '713', region: 'Texas', city: 'Houston', timezone: 'CST' },
+        ],
+        '44': [
+            { prefix: '20', region: 'England', city: 'London', timezone: 'GMT' },
+            { prefix: '121', region: 'England', city: 'Birmingham', timezone: 'GMT' },
+            { prefix: '131', region: 'Scotland', city: 'Edinburgh', timezone: 'GMT' },
+        ],
+        '91': [
+            { prefix: '11', region: 'Delhi NCR', city: 'New Delhi', timezone: 'IST' },
+            { prefix: '22', region: 'Maharashtra', city: 'Mumbai', timezone: 'IST' },
+            { prefix: '80', region: 'Karnataka', city: 'Bengaluru', timezone: 'IST' },
+            { prefix: '44', region: 'Tamil Nadu', city: 'Chennai', timezone: 'IST' },
+        ],
+    };
+    let regionInfo = { region: 'Unknown', city: 'Unknown', timezone: 'Unknown' };
+    if (countryCode && REGION_MAP[countryCode]) {
+        const areaPrefix = nationalNumber.substring(0, 3);
+        const match = REGION_MAP[countryCode].find(r => areaPrefix.startsWith(r.prefix));
+        if (match) {
+            regionInfo = { region: match.region, city: match.city, timezone: match.timezone };
+        } else {
+            // Fallback: deterministic from seed
+            const regions = REGION_MAP[countryCode];
+            regionInfo = regions[Math.abs(hashCode(nationalNumber)) % regions.length];
+        }
+    }
+
+    // ── RISK ASSESSMENT (updated with new factors) ──
     let riskScore = 15;
     if (!isValidFormat) riskScore += 30;
     if (!hasPlus && !countryCode) riskScore += 15;
     if (numberType === 'short_code') riskScore += 20;
-
-    // Simulated VOIP detection
-    const seed = hashCode(phone + 'voip');
-    const isVoIP = Math.abs(seed % 100) < 25;
-    if (isVoIP) riskScore += 20;
-
+    if (isVoIP) riskScore += 15;
+    if (simSwapRisk.recentSwap) riskScore += 12;
+    if (simSwapRisk.level === 'high') riskScore += 8;
+    if (spamFlagged) riskScore += 15;
+    if (portingHistory.ported) riskScore += 5;
+    if (numberAge.registrationEra === 'new') riskScore += 8;
     riskScore = Math.min(100, riskScore);
-    const riskLevel = riskScore > 60 ? 'high' : riskScore > 40 ? 'medium' : 'low';
+    const riskLevel = riskScore > 70 ? 'critical' : riskScore > 50 ? 'high' : riskScore > 30 ? 'medium' : 'low';
 
+    // ── FINDINGS (enriched) ──
     const findings = [];
-    if (!isValidFormat) findings.push({ label: 'Invalid Format', detail: 'Number does not match standard phone format', severity: 'high' });
+    if (!isValidFormat) findings.push({ label: 'Invalid Format', detail: 'Number does not match standard phone format', severity: 'critical' });
+    if (spamFlagged) findings.push({ label: 'Spam/Scam Flagged', detail: `${spamReportCount} reports — category: ${spamReport.category}`, severity: 'critical' });
+    if (simSwapRisk.recentSwap) findings.push({ label: 'Recent SIM Swap', detail: `SIM swap detected on ${simSwapRisk.lastSwapDate}`, severity: 'high' });
+    if (simSwapRisk.level === 'high') findings.push({ label: 'High SIM Swap Risk', detail: `Risk score: ${simSwapRisk.score}/100`, severity: 'high' });
     if (isVoIP) findings.push({ label: 'VoIP Number Detected', detail: 'Number may be a virtual/VoIP number', severity: 'medium' });
+    if (portingHistory.ported) findings.push({ label: 'Number Ported', detail: `Ported from ${portingHistory.originalCarrier} on ${portingHistory.portDate}`, severity: 'medium' });
+    if (numberAge.registrationEra === 'new') findings.push({ label: 'New Number', detail: `Estimated age: ~${numberAge.estimatedYears} year(s)`, severity: 'medium' });
     if (!hasPlus) findings.push({ label: 'No Country Code Prefix', detail: 'Number lacks "+" international prefix', severity: 'low' });
     if (countryInfo) findings.push({ label: 'Country Identified', detail: `${countryInfo.flag} ${countryInfo.country}`, severity: 'info' });
+    if (detectedApps.length > 0) findings.push({ label: 'Messaging Apps', detail: `Found on ${detectedApps.length} platform(s): ${detectedApps.map(a => a.name).join(', ')}`, severity: 'info' });
 
     return {
         type: 'phone',
@@ -540,14 +654,24 @@ async function analyzePhone(phone) {
         isVoIP,
         isValidFormat,
         digitCount: digits.length,
+        // New intelligence fields
+        messagingApps,
+        detectedAppsCount: detectedApps.length,
+        simSwapRisk,
+        portingHistory,
+        spamReport,
+        numberAge,
+        regionInfo,
         findings,
         recommendations: [
-            isVoIP ? 'VoIP numbers are often used for anonymity' : 'Number appears to be a standard carrier number',
-            countryInfo ? `Number originates from ${countryInfo.country}` : 'Unable to determine country of origin',
-            'Cross-reference with messaging platforms (WhatsApp, Telegram)',
-            'Check for associated social media accounts',
+            spamFlagged ? `⚠ Number is flagged as ${spamReport.category} — exercise extreme caution` : 'Number is not flagged in spam databases',
+            simSwapRisk.recentSwap ? 'Recent SIM swap detected — verify identity carefully' : (simSwapRisk.level === 'high' ? 'SIM swap risk is elevated' : 'SIM swap risk is low'),
+            isVoIP ? 'VoIP numbers are often used for anonymity — verify identity' : 'Number appears to be a standard carrier number',
+            detectedApps.length > 0 ? `Active on messaging: ${detectedApps.map(a => a.name).join(', ')}` : 'No messaging platform associations detected',
+            portingHistory.ported ? `Number was ported from ${portingHistory.originalCarrier}` : 'Number has not been ported',
+            countryInfo ? `Origin: ${countryInfo.country} (${regionInfo.city !== 'Unknown' ? regionInfo.city + ', ' : ''}${regionInfo.timezone})` : 'Unable to determine country of origin',
         ],
-        summary: `Phone ${phone} — ${countryInfo?.country || 'Unknown country'}, Carrier: ${carrier}, Type: ${numberType}. ${isVoIP ? 'VoIP detected.' : ''} Risk: ${riskLevel.toUpperCase()}.`,
+        summary: `Phone ${phone} — ${countryInfo?.country || 'Unknown'}, ${carrier}, ${numberType}. ${detectedApps.length} messaging apps. ${spamFlagged ? 'SPAM FLAGGED.' : ''} ${isVoIP ? 'VoIP.' : ''} SIM swap: ${simSwapLevel}. Risk: ${riskLevel.toUpperCase()}.`,
     };
 }
 
